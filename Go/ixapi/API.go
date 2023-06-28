@@ -295,6 +295,10 @@ func (api *IntelligenceXAPI) FilePreview(ctx context.Context, item *Item) (text 
 func (api *IntelligenceXAPI) FileRead(ctx context.Context, item *Item, Limit int64) (data []byte, err error) {
 	// Request: GET /file/read?type=0&storageid=[storage identifier]&bucket=[optional bucket]
 	request := "?type=0&storageid=" + item.StorageID + "&bucket=" + item.Bucket
+	//falling back to querying by systemID if StorageID is not specified
+	if item.StorageID == "" {
+		request = "?type=0&systemid=" + item.SystemID.String() + "&bucket=" + item.Bucket
+	}
 
 	response, err := api.httpRequest(ctx, "file/read"+request, "GET", nil, "")
 	if err != nil {
